@@ -33,12 +33,15 @@ An answer to that question.
 
 == Changelog ==
 
-= 1.0 =
-* Initial plugin version 
-
 = 1.1 =
 * Update WP-Widget Media upload.
 
+= 1.0 =
+* Initial plugin version
+
 == Upgrade notice ==
+
+= 1.1 =
+* Update WP-Widget Media upload.
 
 == Arbitrary section 1 ==
