@@ -46,7 +46,7 @@ class wpwidget_media_gallery extends WP_Widget {
                 $showtitle = !empty($instance['wpwidget_showtitle'])?true:false;
                 $showdesc = !empty($instance['wpwidget_showdesc'])?true:false;
                 $wtheID = get_the_ID();
-
+                if($wpwidgetpage){    
                 if ( in_array($wtheID, $wpwidgetpage) ):
                     // ------                 
                     echo $before_widget;
@@ -80,7 +80,7 @@ class wpwidget_media_gallery extends WP_Widget {
                     echo $after_widget;		                                
 		// ------
                 endif;    
-
+           }    
 	}
 
 // Update
@@ -166,9 +166,10 @@ class wpwidget_media_gallery extends WP_Widget {
         <p>
                 <input type="button" value="<?php _e( 'Upload Image', 'wpwidget_media_gallery' ); ?>" class="button wpwidget_media_upload" id="wpwidget_media_upload"/>                  	
                 <input type="hidden" value="<?php echo $instance['wpwidget_thumbnail_image'] ?>" name="<?php echo $this->get_field_name('wpwidget_thumbnail_image'); ?>" class="wpwidget_arr" id="<?php echo $this->get_field_id( 'wpwidget_thumbnail_image' ); ?>">
-                
+                <?php if (!empty($instance['wpwidget_thumbnail_image'])){ ?>
         	<ul class="wpwidgetgallery">
                     <?php 
+                        
                         unset($_COOKIE['key']);
                         setcookie('image_array', '', time() - 3600);
                         if (is_admin() && !isset($_COOKIE['image_array'])) {                                                    
@@ -188,9 +189,10 @@ class wpwidget_media_gallery extends WP_Widget {
                             $cnt++;        
                             echo $out;
                             endif;
-                        endforeach;                        
+                        endforeach;     
                     ?>
                 </ul> 
+                <?php } ?>
         </p>
                 
     <?php }        
@@ -204,20 +206,21 @@ function wpwidget_media_gallery_init() {
 add_action('widgets_init', 'wpwidget_media_gallery_init');
 
 //Media upload
-add_action('admin_init', 'widget_media_gallery_upload');
-function widget_media_gallery_upload(){
-	if(function_exists( 'wp_enqueue_media' ) && is_admin() ){ 	
-		wp_register_script( 'wpwidget-mediaupload', plugins_url() . '/js/mediaupload.js', array('jquery') );
-		wp_enqueue_script ( 'wpwidget-mediaupload' );
-		wp_enqueue_media();
-	}else{
-		wp_enqueue_style('thickbox');
-		wp_enqueue_script('media-upload');
-		wp_enqueue_script('thickbox');
-		wp_enqueue_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widgetgallery/js/mediaupload.js', array('jquery') );
-	}	
+add_action('init', 'widget_media_gallery_upload');
+function widget_media_gallery_upload(){     
+  if( is_active_widget( '', '', 'wpwidget_media_gallery' ) ) {  
+    if(function_exists( 'wp_enqueue_media' ) && is_admin() ){ 	
+            wp_register_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
+            wp_enqueue_script ( 'wpwidget-mediaupload' );
+            wp_enqueue_media();
+    }else{
+            wp_enqueue_style('thickbox');
+            wp_enqueue_script('media-upload');
+            wp_enqueue_script('thickbox');
+            wp_enqueue_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
+    }	        
+  }  
 }
-
 
 ?>        
 

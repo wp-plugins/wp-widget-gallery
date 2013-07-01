@@ -36,6 +36,9 @@ An answer to that question.
 = 1.0 =
 * Initial plugin version 
 
+= 1.1 =
+* Update WP-Widget Media upload.
+
 == Upgrade notice ==
 
 == Arbitrary section 1 ==
