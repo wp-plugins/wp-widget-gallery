@@ -14,7 +14,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 This WordPress plugin allows user to create a gallery for widgets. This plugin also has the ability to display it on page of your choice. 
 
+Any errors or bugs you find please use the support forum.
 
+If you find this plugin helpful, we appreciate if you give us your review. 
 
 == Installation ==
 
