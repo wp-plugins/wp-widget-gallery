@@ -163,7 +163,7 @@ class wpwidget_media_gallery extends WP_Widget {
 		<input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showdesc' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showdesc' ); ?>" <?php checked(isset($instance['wpwidget_showdesc']) ? $instance['wpwidget_showdesc'] : 0); ?> />
                 <label for="<?php echo $this->get_field_id( 'wpwidget_showdesc' ); ?>">Display image description:</label>
         </p>
-        <p>
+        <p class="wp-widget-gal">
                 <input type="button" value="<?php _e( 'Upload Image', 'wpwidget_media_gallery' ); ?>" class="button wpwidget_media_upload" id="wpwidget_media_upload"/>                  	
                 <input type="hidden" value="<?php echo $instance['wpwidget_thumbnail_image'] ?>" name="<?php echo $this->get_field_name('wpwidget_thumbnail_image'); ?>" class="wpwidget_arr" id="<?php echo $this->get_field_id( 'wpwidget_thumbnail_image' ); ?>">
                 <?php if (!empty($instance['wpwidget_thumbnail_image'])){ ?>

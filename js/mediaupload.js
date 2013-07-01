@@ -57,8 +57,14 @@ jQuery(document).ready(function($) {
                                       _newval = _newval + ',' + attachment.id;                                      
                                 }
 
-                                jQuery('.wpwidgetgallery').append('<li style="display:inline-block;padding:5px;"><img src="'+  _attachment_url +'" data-attachment_id="'+ attachment.id +'" width="80" height="80"><div class="wpwidgetoverlay"><a href="#" data-attachment_id ="'+attachment.id+'" id="'+_cnt+'" class="wpwidget_rem_img">remove</a></div></li>');                                                                    
-                                _cnt++;
+                                if ( jQuery('.wpwidgetgallery').length == 0 ){
+                                    jQuery('<ul class="wpwidgetgallery"></ul>').appendTo('.wp-widget-gal');                                
+                                    jQuery('.wpwidgetgallery').append('<li style="display:inline-block;padding:5px;"><img src="'+  _attachment_url +'" data-attachment_id="'+ attachment.id +'" width="80" height="80"><div class="wpwidgetoverlay"><a href="#" data-attachment_id ="'+attachment.id+'" id="'+_cnt+'" class="wpwidget_rem_img">remove</a></div></li>');                                                                    
+                                    _cnt++;
+                                }else{
+                                    jQuery('.wpwidgetgallery').append('<li style="display:inline-block;padding:5px;"><img src="'+  _attachment_url +'" data-attachment_id="'+ attachment.id +'" width="80" height="80"><div class="wpwidgetoverlay"><a href="#" data-attachment_id ="'+attachment.id+'" id="'+_cnt+'" class="wpwidget_rem_img">remove</a></div></li>');                                                                    
+                                    _cnt++;
+                                }    
                                       
                           });
                           
