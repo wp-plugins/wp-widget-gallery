@@ -29,29 +29,31 @@ class wpwidget_media_gallery extends WP_Widget {
 	
 	// Widget Settings
 	function wpwidget_media_gallery() {
-                //echo $this->widget($args, $instance);
-		$widget_ops = array('description' => __('Creates gallery on your sidebar and has ability to display on page of your choice.') );
-		$control_ops = array( 'width' => 300, 'height' => 350, 'id_base' => 'wpwidget_media_gallery' );
-		$this->WP_Widget( 'wpwidget_media_gallery', __('WP Widget Gallery'), $widget_ops, $control_ops );
+            //echo $this->widget($args, $instance);
+            $widget_ops = array('description' => __('Creates gallery on your sidebar and has ability to display on page of your choice.') );
+            $control_ops = array( 'width' => 300, 'height' => 350, 'id_base' => 'wpwidget_media_gallery' );
+            $this->WP_Widget( 'wpwidget_media_gallery', __('WP Widget Gallery'), $widget_ops, $control_ops );                                                
 	}
         
 	// Widget Output
 	function widget($args, $instance) {
 		extract($args);    
-                
+                global $post;
 		$title = apply_filters('widget_title', $instance['title']);               
                 $wpwidgetpage = $instance['wpwidgetpage'];
                 $wpwidgetsize = $instance['wpwidgetsize'];
                 $images = explode(',',$instance['wpwidget_thumbnail_image']);
                 $showtitle = !empty($instance['wpwidget_showtitle'])?true:false;
                 $showdesc = !empty($instance['wpwidget_showdesc'])?true:false;
-                $wtheID = get_the_ID();
-                if($wpwidgetpage){    
+                $page_object = get_queried_object();
+                $wtheID     = get_queried_object_id();
+                
+                if( !empty($wpwidgetpage)){                    
                 if ( in_array($wtheID, $wpwidgetpage) ):
                     // ------                 
                     echo $before_widget;
                     echo $before_title . $title . $after_title;   
-                    if ($images):
+                    if (is_array($images)):
                     echo '<ul>';                       
                     foreach( $images as $image){ 
                             $attachment = get_post( $image );
@@ -68,9 +70,9 @@ class wpwidget_media_gallery extends WP_Widget {
                             if ( $url ):
                                 $out   = '<li style="margin:0 auto 10px;">'.$url;
                                 if ( $showtitle )
-                                $out  .= '<p class="txt-center t-upper">'.$obj['title'].'</p>';                            
+                                $out  .= '<p style="text-align:center;text-transform:uppercase;">'.$obj['title'].'</p>';                            
                                 if ( $showdesc )
-                                $out  .= '<p class="txt-center" style="font-size:11px;">'.$obj['description'].'</p>';                                          
+                                $out  .= '<p style="text-align:center;font-size:11px;">'.$obj['description'].'</p>';                                          
                                 $out  .= '</li>';              
                                 echo $out;
                             endif;
@@ -80,6 +82,38 @@ class wpwidget_media_gallery extends WP_Widget {
                     echo $after_widget;		                                
 		// ------
                 endif;    
+           }else{
+               // ------                 
+                    echo $before_widget;
+                    echo $before_title . $title . $after_title;   
+                    if (is_array($images)):
+                    echo '<ul>';                       
+                    foreach( $images as $image){ 
+                            $attachment = get_post( $image );
+                            $obj = array(
+                                    'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+                                    'caption' => $attachment->post_excerpt,
+                                    'description' => $attachment->post_content,
+                                    'href' => get_permalink( $attachment->ID ),
+                                    'src' => $attachment->guid,
+                                    'title' => $attachment->post_title
+                            );
+                            
+                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false, array('style' => 'margin:0 auto;display:block;position:relative'));
+                            if ( $url ):
+                                $out   = '<li style="margin:0 auto 10px;">'.$url;
+                                if ( $showtitle )
+                                $out  .= '<p style="text-align:center;text-transform:uppercase;">'.$obj['title'].'</p>';                            
+                                if ( $showdesc )
+                                $out  .= '<p style="text-align:center;font-size:11px;">'.$obj['description'].'</p>';                                          
+                                $out  .= '</li>';              
+                                echo $out;
+                            endif;
+                    }
+                    echo '</ul>';
+                    endif;
+                    echo $after_widget;		                                
+		// ------
            }    
 	}
 
@@ -168,15 +202,19 @@ class wpwidget_media_gallery extends WP_Widget {
                 <input type="hidden" value="<?php echo $instance['wpwidget_thumbnail_image'] ?>" name="<?php echo $this->get_field_name('wpwidget_thumbnail_image'); ?>" class="wpwidget_arr" id="<?php echo $this->get_field_id( 'wpwidget_thumbnail_image' ); ?>">
                 <?php if (!empty($instance['wpwidget_thumbnail_image'])){ ?>
         	<ul class="wpwidgetgallery">
-                    <?php 
-                        
-                        unset($_COOKIE['key']);
-                        setcookie('image_array', '', time() - 3600);
+                    <?php       
+                        /*
                         if (is_admin() && !isset($_COOKIE['image_array'])) {                                                    
+                            unset($_COOKIE['image_array']);
+                            setcookie('image_array', '', time() - 3600);
                             setcookie("image_array", $instance['wpwidget_thumbnail_image']);
                         }else{
+                            unset($_COOKIE['image_array']);
+                            setcookie('image_array', '', time() - 3600);
                             setcookie("image_array", $instance['wpwidget_thumbnail_image']);
-                        }        
+                        } 
+                         * 
+                         */       
                         $images = explode(',',$instance['wpwidget_thumbnail_image']);
                         $cnt = 0;
                         
@@ -208,8 +246,8 @@ add_action('widgets_init', 'wpwidget_media_gallery_init');
 //Media upload
 add_action('init', 'widget_media_gallery_upload');
 function widget_media_gallery_upload(){     
-  if( is_active_widget( '', '', 'wpwidget_media_gallery' ) ) {  
-    if(function_exists( 'wp_enqueue_media' ) && is_admin() ){ 	
+  if( is_active_widget(  false, false, 'wpwidget_media_gallery', true )) {  
+    if(function_exists( 'wp_enqueue_media' )){ 	
             wp_register_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
             wp_enqueue_script ( 'wpwidget-mediaupload' );
             wp_enqueue_media();
@@ -221,7 +259,6 @@ function widget_media_gallery_upload(){
     }	        
   }  
 }
-
 ?>        
 
 

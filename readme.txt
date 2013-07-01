@@ -33,6 +33,9 @@ An answer to that question.
 
 == Changelog ==
 
+= 1.2 =
+* Update WP-Widget frontend image gallery.
+
 = 1.1 =
 * Update WP-Widget Media upload.
 
@@ -40,6 +43,9 @@ An answer to that question.
 * Initial plugin version
 
 == Upgrade notice ==
+
+= 1.2 =
+* Update WP-Widget frontend image gallery.
 
 = 1.1 =
 * Update WP-Widget Media upload.
