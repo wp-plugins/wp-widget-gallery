@@ -3,7 +3,7 @@
 Plugin Name: WP-Widget Gallery
 Plugin URI: http://scoopdesign.com.au
 Description: This WordPress plugin allows user to create a gallery for widgets. This plugin also has the ability to display it on page of your choice. 
-Version: 1.2
+Version: 1.3
 Author: eyouth { rob.panes } | scoopdesign.com.au
 Author URI: http://scoodpesign.com.au
 
@@ -47,14 +47,21 @@ class wpwidget_media_gallery extends WP_Widget {
                 $showdesc = !empty($instance['wpwidget_showdesc'])?true:false;
                 $page_object = get_queried_object();
                 $wtheID     = get_queried_object_id();
-                
+                $styleadditions = "margin:0 auto 3px;";
+                if ($instance['wpwidgetsize'] == "small-thumb"){
+                        $smallThumb = array(50, 50);
+                        $wpwidgetsize = $smallThumb;
+                        // Width and Height added to style as IE was ignoring the default width and height set.
+                        //$styleadditions = "float: left; display: block;margin:3px; width: 50px; height: 50px;";
+                }
+                                
                 if( !empty($wpwidgetpage)){                    
                 if ( in_array($wtheID, $wpwidgetpage) ):
                     // ------                 
                     echo $before_widget;
                     echo $before_title . $title . $after_title;   
                     if (is_array($images)):
-                    echo '<ul>';                       
+                    echo '<ul id="widget-media-container">';                       
                     foreach( $images as $image){ 
                             $attachment = get_post( $image );
                             $obj = array(
@@ -65,21 +72,21 @@ class wpwidget_media_gallery extends WP_Widget {
                                     'src' => $attachment->guid,
                                     'title' => $attachment->post_title
                             );
-                            
-                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false, array('style' => 'margin:0 auto;display:block;position:relative'));
+                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
+                            $src   = wp_get_attachment_image_src( $image, 'full' );
                             if ( $url ):
-                                $out   = '<li style="margin:0 auto 10px;">'.$url;
+                                $out   = '<li class="item"><a href="'.$src[0].'" data-lightbox="'.$obj['title'].'" title="'.$obj['title'].'">'.$url.'</a>';
                                 if ( $showtitle )
-                                $out  .= '<p style="text-align:center;text-transform:uppercase;">'.$obj['title'].'</p>';                            
+                                $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
                                 if ( $showdesc )
-                                $out  .= '<p style="text-align:center;font-size:11px;">'.$obj['description'].'</p>';                                          
+                                $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                          
                                 $out  .= '</li>';              
                                 echo $out;
                             endif;
                     }
                     echo '</ul>';
                     endif;
-                    echo $after_widget;		                                
+                    echo $after_widget;		                                	                                
 		// ------
                 endif;    
            }else{
@@ -87,7 +94,7 @@ class wpwidget_media_gallery extends WP_Widget {
                     echo $before_widget;
                     echo $before_title . $title . $after_title;   
                     if (is_array($images)):
-                    echo '<ul>';                       
+                    echo '<ul id="widget-media-container">';                       
                     foreach( $images as $image){ 
                             $attachment = get_post( $image );
                             $obj = array(
@@ -98,14 +105,14 @@ class wpwidget_media_gallery extends WP_Widget {
                                     'src' => $attachment->guid,
                                     'title' => $attachment->post_title
                             );
-                            
-                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false, array('style' => 'margin:0 auto;display:block;position:relative'));
+                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
+                            $src   = wp_get_attachment_image_src( $image, 'full' );
                             if ( $url ):
-                                $out   = '<li style="margin:0 auto 10px;">'.$url;
+                                $out   = '<li class="item"><a href="'.$src[0].'" data-lightbox="'.$obj['title'].'" title="'.$obj['title'].'">'.$url.'</a>';
                                 if ( $showtitle )
-                                $out  .= '<p style="text-align:center;text-transform:uppercase;">'.$obj['title'].'</p>';                            
+                                $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
                                 if ( $showdesc )
-                                $out  .= '<p style="text-align:center;font-size:11px;">'.$obj['description'].'</p>';                                          
+                                $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                          
                                 $out  .= '</li>';              
                                 echo $out;
                             endif;
@@ -184,6 +191,7 @@ class wpwidget_media_gallery extends WP_Widget {
                     <label for="<?php echo $this->get_field_id( 'wpwidgetsize' ); ?>">Image Size:<br /></label>
                     <select name="<?php echo $this->get_field_name('wpwidgetsize'); ?>" style='width:100%;'> 
                         <?php $selected = 'selected=selected'; echo $instance['wpwidgetsize']; ?>
+                        <option value="small-thumb" <?php if (trim($instance['wpwidgetsize']) == 'small-thumb')echo $selected; else ''; ?>>Small Thumb</options>
                         <option value="thumbnail" <?php if (trim($instance['wpwidgetsize']) == 'thumbnail')echo $selected; else ''; ?>>Thumbnail</options>
                          <option value="medium" <?php if (trim($instance['wpwidgetsize']) == 'medium')echo $selected; else ''; ?>>Medium</options>
                          <option value="full" <?php if (trim($instance['wpwidgetsize']) == 'full')echo $selected; else ''; ?>>Full</options>    
@@ -243,23 +251,65 @@ function wpwidget_media_gallery_init() {
 }
 add_action('widgets_init', 'wpwidget_media_gallery_init');
 
+if( is_active_widget(  false, false, 'wpwidget_media_gallery', true )) {
 //Media upload
 add_action('init', 'widget_media_gallery_upload');
-function widget_media_gallery_upload(){     
-  if( is_active_widget(  false, false, 'wpwidget_media_gallery', true )) {  
+function widget_media_gallery_upload(){         
     if(function_exists( 'wp_enqueue_media' )){ 	
             wp_register_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
             wp_enqueue_script ( 'wpwidget-mediaupload' );
+            wp_register_script( 'wpwidget-masonry', plugins_url() . '/wp-widget-gallery/js/jquery.masonry.min.js', array('jquery') );
+            wp_enqueue_script ( 'wpwidget-masonry' );            
+            wp_register_script( 'wpwidget-modernizer', plugins_url() . '/wp-widget-gallery/js/modernizr-2.5.3.min.js', array('jquery') );
+            wp_enqueue_script ( 'wpwidget-modernizer' );  
+            wp_register_script( 'wpwidget-lightbox', plugins_url() . '/wp-widget-gallery/js/lightbox-2.6.min.js', array('jquery') );
+            wp_enqueue_script ( 'wpwidget-lightbox' );  
+            
             wp_enqueue_media();
     }else{
             wp_enqueue_style('thickbox');
             wp_enqueue_script('media-upload');
             wp_enqueue_script('thickbox');
             wp_enqueue_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
-    }	        
-  }  
+            wp_enqueue_script( 'wpwidget-masonry', plugins_url() . '/wp-widget-gallery/js/jquery.masonry.min.js', array('jquery') );         
+            wp_enqueue_script( 'wpwidget-modernizer', plugins_url() . '/wp-widget-gallery/js/modernizr-2.5.3.min.js', array('jquery') );
+            }	          
+}
+
+function widget_media_css(){
+?>
+        <style type="text/css">
+            #widget-media-container {
+                clear:both;      
+                display:inline-table;
+            }
+            .widget ul li.item, div.item {
+                display: block;
+                float: left;
+                width: auto;
+                margin: 3px;
+                list-style: none;
+                -webkit-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                -moz-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                -ms-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                -o-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+            }
+
+            .widget ul li.item img {
+                margin:0 auto;
+                display:block;
+                position:relative
+            }
+        </style>
+<?php   
+}
+add_action('wp_head','widget_media_css');
+
+function wpwidget_lightbox(){
+    wp_register_style('wpwidget-lightbox', plugins_url('wp-widget-gallery/css/lightbox.css',__DIR__));
+    wp_enqueue_style('wpwidget-lightbox');
+}
+add_action('wp_enqueue_scripts','wpwidget_lightbox');
 }
 ?>        
-
-
-

@@ -5,7 +5,16 @@ jQuery(document).ready(function($) {
 		var file_frame;
 		var wp_thumb_post_id = wp.media.model.settings.post.id; // Store the old id
                 var set_to_post_id = 0; // Set this
-                var wpwidget_arrname;
+                var wpwidget_arrname;                                
+                
+                jQuery('#widget-media-container').masonry({
+                        columnWidth: jQuery('.widget').width(),
+                        itemSelector: 'item',
+                        isFitWidth: true,
+                        isAnimated: !Modernizr.csstransitions
+                }).imagesLoaded(function() {
+                        jQuery(this).masonry('reload');
+                });
 		    
 		  jQuery('#wpwidget_media_upload').live('click', function( event ){
 		 

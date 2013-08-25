@@ -3,7 +3,7 @@ Contributors: eyouth.ace
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=33HE6UC8VRNRU&lc=PH&item_name=Charity%20Thermometer&item_number=charterm¤cy_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: widget, sidebar, gallery, sidebar gallery, wp-widget, widget gallery
 Requires at least: 3.5
-Tested up to: 3.5.1
+Tested up to: 3.6
 Stable tag: widget, sidebar, gallery, sidebar gallery, wp-widget, widget gallery
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,7 +21,7 @@ If you find this plugin helpful, we appreciate if you give us your review.
 == Installation ==
 
 1. Upload wp-widget-gallery folder to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
+2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently asked questions ==   
 
@@ -34,6 +34,9 @@ An answer to that question.
 1. This is the screenshot for the admin of the wp-widget gallery plugin.
 
 == Changelog ==
+
+= 1.3 =
+* Update WP-Widget wp-media upload.
 
 = 1.2 =
 * Update WP-Widget frontend image gallery.
@@ -53,3 +56,6 @@ An answer to that question.
 * Update WP-Widget Media upload.
 
 == Arbitrary section 1 ==
+
+= 1.3 =
+* Small thumb as suggested by Ross Dawson. Added lightbox and masonry for small thumb.
