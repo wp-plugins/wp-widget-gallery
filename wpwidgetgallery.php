@@ -3,7 +3,7 @@
 Plugin Name: WP-Widget Gallery
 Plugin URI: http://scoopdesign.com.au
 Description: This WordPress plugin allows user to create a gallery for widgets. This plugin also has the ability to display it on page of your choice. 
-Version: 1.3
+Version: 1.4
 Author: eyouth { rob.panes } | scoopdesign.com.au
 Author URI: http://scoodpesign.com.au
 
@@ -26,15 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 class wpwidget_media_gallery extends WP_Widget { 
-	
-	// Widget Settings
-	function wpwidget_media_gallery() {
-            //echo $this->widget($args, $instance);
+    
+        function __construct() {
             $widget_ops = array('description' => __('Creates gallery on your sidebar and has ability to display on page of your choice.') );
             $control_ops = array( 'width' => 300, 'height' => 350, 'id_base' => 'wpwidget_media_gallery' );
-            $this->WP_Widget( 'wpwidget_media_gallery', __('WP Widget Gallery'), $widget_ops, $control_ops );                                                
+            $this->WP_Widget( 'wpwidget_media_gallery', __('WP Widget Gallery'), $widget_ops, $control_ops ); 
 	}
-        
+
 	// Widget Output
 	function widget($args, $instance) {
 		extract($args);    
@@ -140,52 +138,56 @@ class wpwidget_media_gallery extends WP_Widget {
 	// Backend Form
 	function form($instance) {
 		
-		$defaults = array( 'title' => 'Widget Image' ); // Default Values
+		$defaults = array( 
+                    'title' => 'Widget Gallery',
+                    'wpwidgetpage' => 0,
+                    'wpwidgetsize' => 'thumbnail',
+                    'wpwidget_showtitle' => false,
+                    'wpwidget_showdesc' => false,
+                    'wpwidget_thumbnail_image' => array()
+                    ); // Default Values
 		$instance = wp_parse_args( (array) $instance, $defaults ); 
                 
         ?>        
-                <p>
+        <p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>">Widget Title:</label>
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" />
-		</p>
-                <p>
-                <label for="<?php echo $this->get_field_id( 'wpwidgetpage' ); ?>">Show in Pages:<br /></label>			
-                <?php  
-                    $args = array(
-                            'sort_order' => 'ASC',
-                            'sort_column' => 'post_title',
-                            'hierarchical' => 1,
-                            'exclude' => '',
-                            'include' => '',
-                            'meta_key' => '',
-                            'meta_value' => '',
-                            'authors' => '',
-                            'child_of' => 0,
-                            'parent' => -1,
-                            'exclude_tree' => '',
-                            'number' => '',
-                            'offset' => 0,
-                            'post_type' => 'page',
-                            'post_status' => 'publish'
-                    ); 
-                    $pages = get_pages($args); 
-                    ?>
+	</p>
+        <p>
+                    <label for="<?php echo $this->get_field_id( 'wpwidgetpage' ); ?>">Show in Pages:<br /></label>			
+                    <?php  
+                        $args = array(
+                                'sort_order' => 'ASC',
+                                'sort_column' => 'post_title',
+                                'hierarchical' => 1,
+                                'exclude' => '',
+                                'include' => '',
+                                'meta_key' => '',
+                                'meta_value' => '',
+                                'authors' => '',
+                                'child_of' => 0,
+                                'parent' => -1,
+                                'exclude_tree' => '',
+                                'number' => '',
+                                'offset' => 0,
+                                'post_type' => 'page',
+                                'post_status' => 'publish'
+                        ); 
+                        $pages = get_pages($args); 
+                        ?>
 
-                    <select multiple='multiple' name="<?php echo $this->get_field_name('wpwidgetpage'); ?>[]" style='width:100%;'>
-                    <?php
+                        <select multiple='multiple' name="<?php echo $this->get_field_name('wpwidgetpage'); ?>[]" style='width:100%;'>
+                        <?php foreach ($pages as $page): ?>
+                        <?php   if (is_array($instance['wpwidgetpage']) ): ?>                    
+                                    <option value="<?php echo $page->ID ?>" <?php selected(in_array($page->ID, $instance["wpwidgetpage"]))?>><?php echo trim($page->post_title)?></options>
+                        <?php   else: ?>
+                                    <option value="<?php echo $page->ID ?>"><?php echo trim($page->post_title) ?></options>
+                        <?php   endif; ?>
 
-                    foreach ($pages as $page):
-                            if (is_array($instance['wpwidgetpage']) ):
-                    ?>            
-                                <option value="<?php echo $page->ID ?>" <?php selected(in_array($page->ID, $instance["wpwidgetpage"]))?>><?php echo trim($page->post_title)?></options>
-                    <?php   else: ?>
-                                <option value="<?php echo $page->ID ?>"><?php echo trim($page->post_title) ?></options>
-                    <?php   endif; 
+                        <?php endforeach;  ?>
 
-                    endforeach;
-                    ?>
-                    </select>   
-                    <small>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</small>                            
+                        </select>   
+                        <small>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</small>                            
         </p>        
         <p>
                     <label for="<?php echo $this->get_field_id( 'wpwidgetsize' ); ?>">Image Size:<br /></label>
@@ -241,75 +243,78 @@ class wpwidget_media_gallery extends WP_Widget {
                 <?php } ?>
         </p>
                 
-    <?php }        
-        
-}        
+<?php }       
+}//end of class 
+    
+    // Add Widget
+    add_action('widgets_init', 'wpwidget_media_gallery_init');
+    function wpwidget_media_gallery_init() {
+        register_widget('wpwidget_media_gallery');	
+    }
 
-// Add Widget
-function wpwidget_media_gallery_init() {
-	register_widget('wpwidget_media_gallery');	
-}
-add_action('widgets_init', 'wpwidget_media_gallery_init');
-
-if( is_active_widget(  false, false, 'wpwidget_media_gallery', true )) {
-//Media upload
-add_action('init', 'widget_media_gallery_upload');
-function widget_media_gallery_upload(){         
-    if(function_exists( 'wp_enqueue_media' )){ 	
+    if( is_active_widget(  false, false, 'wpwidget_media_gallery', true )) {
+        //Media upload
+        add_action('admin_init', 'widget_media_gallery_upload');
+        function widget_media_gallery_upload(){
             wp_register_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
             wp_enqueue_script ( 'wpwidget-mediaupload' );
             wp_register_script( 'wpwidget-masonry', plugins_url() . '/wp-widget-gallery/js/jquery.masonry.min.js', array('jquery') );
             wp_enqueue_script ( 'wpwidget-masonry' );            
             wp_register_script( 'wpwidget-modernizer', plugins_url() . '/wp-widget-gallery/js/modernizr-2.5.3.min.js', array('jquery') );
-            wp_enqueue_script ( 'wpwidget-modernizer' );  
-            wp_register_script( 'wpwidget-lightbox', plugins_url() . '/wp-widget-gallery/js/lightbox-2.6.min.js', array('jquery') );
-            wp_enqueue_script ( 'wpwidget-lightbox' );  
+            wp_enqueue_script ( 'wpwidget-modernizer' );              
             
-            wp_enqueue_media();
-    }else{
-            wp_enqueue_style('thickbox');
-            wp_enqueue_script('media-upload');
-            wp_enqueue_script('thickbox');
-            wp_enqueue_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
-            wp_enqueue_script( 'wpwidget-masonry', plugins_url() . '/wp-widget-gallery/js/jquery.masonry.min.js', array('jquery') );         
-            wp_enqueue_script( 'wpwidget-modernizer', plugins_url() . '/wp-widget-gallery/js/modernizr-2.5.3.min.js', array('jquery') );
+            if(function_exists( 'wp_enqueue_media' )){ 	
+                    wp_enqueue_media();
+            }else{
+                    wp_enqueue_style('thickbox');
+                    wp_enqueue_script('media-upload');
+                    wp_enqueue_script('thickbox');    
             }	          
-}
+        }
+        
+        add_action('wp_enqueue_scripts', 'wp_media_gallery_script');
+        function wp_media_gallery_script(){
+            wp_register_script( 'wpwidget-lightbox', plugins_url() . '/wp-widget-gallery/js/lightbox-2.6.min.js', array('jquery') );
+            wp_enqueue_script ( 'wpwidget-lightbox' );
+        }
 
-function widget_media_css(){
+        function widget_media_css(){
 ?>
-        <style type="text/css">
-            #widget-media-container {
-                clear:both;      
-                display:inline-table;
-            }
-            .widget ul li.item, div.item {
-                display: block;
-                float: left;
-                width: auto;
-                margin: 3px;
-                list-style: none;
-                -webkit-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                -moz-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                -ms-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                -o-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-            }
+                <style type="text/css">
+                    #widget-media-container {
+                        clear:both;      
+                        display:inline-table;
+                    }
+                    .widget ul li.item, div.item {
+                        display: block;
+                        float: left;
+                        width: auto;
+                        margin: 3px;
+                        list-style: none;
+                        -webkit-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                        -moz-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                        -ms-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                        -o-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                        transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+                    }
 
-            .widget ul li.item img {
-                margin:0 auto;
-                display:block;
-                position:relative
-            }
-        </style>
+                    .widget ul li.item img {
+                        margin:0 auto;
+                        display:block;
+                        position:relative
+                    }
+                </style>
 <?php   
-}
-add_action('wp_head','widget_media_css');
+        }
+        
+        add_action('wp_head','widget_media_css');
 
-function wpwidget_lightbox(){
-    wp_register_style('wpwidget-lightbox', plugins_url('wp-widget-gallery/css/lightbox.css',__DIR__));
-    wp_enqueue_style('wpwidget-lightbox');
-}
-add_action('wp_enqueue_scripts','wpwidget_lightbox');
-}
-?>        
+        function wpwidget_lightbox(){
+            wp_register_style('wpwidget-lightbox', plugins_url('wp-widget-gallery/css/lightbox.css',__DIR__));
+            wp_enqueue_style('wpwidget-lightbox');
+        }
+        if ( !is_admin() ){
+            add_action('wp_enqueue_scripts','wpwidget_lightbox');
+        }
+    }
+        

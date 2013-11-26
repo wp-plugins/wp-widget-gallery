@@ -3,7 +3,7 @@ Contributors: eyouth.ace
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=33HE6UC8VRNRU&lc=PH&item_name=Charity%20Thermometer&item_number=charterm¤cy_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: widget, sidebar, gallery, sidebar gallery, wp-widget, widget gallery
 Requires at least: 3.5
-Tested up to: 3.6
+Tested up to: 3.7.1
 Stable tag: widget, sidebar, gallery, sidebar gallery, wp-widget, widget gallery
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -35,6 +35,9 @@ An answer to that question.
 
 == Changelog ==
 
+= 1.4 =
+* Update header generated error.
+
 = 1.3 =
 * Update WP-Widget wp-media upload.
 
@@ -49,6 +52,9 @@ An answer to that question.
 
 == Upgrade notice ==
 
+= 1.4 =
+* Update error on activation and widget initiation.
+
 = 1.2 =
 * Update WP-Widget frontend image gallery.
 
@@ -56,6 +62,9 @@ An answer to that question.
 * Update WP-Widget Media upload.
 
 == Arbitrary section 1 ==
+
+= 1.4 =
+* Update error on activation and widget initiation.
 
 = 1.3 =
 * Small thumb as suggested by Ross Dawson. Added lightbox and masonry for small thumb.
