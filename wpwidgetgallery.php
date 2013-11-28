@@ -3,7 +3,7 @@
 Plugin Name: WP-Widget Gallery
 Plugin URI: http://scoopdesign.com.au
 Description: This WordPress plugin allows user to create a gallery for widgets. This plugin also has the ability to display it on page of your choice. 
-Version: 1.4
+Version: 1.5
 Author: eyouth { rob.panes } | scoopdesign.com.au
 Author URI: http://scoodpesign.com.au
 
