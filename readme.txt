@@ -35,6 +35,9 @@ An answer to that question.
 
 == Changelog ==
 
+= 1.5 =
+* Add option to activate widget carousel.
+
 = 1.4 =
 * Update header generated error.
 
@@ -52,6 +55,9 @@ An answer to that question.
 
 == Upgrade notice ==
 
+= 1.5 =
+* Add option to activate widget carousel.
+
 = 1.4 =
 * Update error on activation and widget initiation.
 
@@ -62,6 +68,9 @@ An answer to that question.
 * Update WP-Widget Media upload.
 
 == Arbitrary section 1 ==
+
+= 1.5 =
+* Add option to activate widget carousel.
 
 = 1.4 =
 * Update error on activation and widget initiation.

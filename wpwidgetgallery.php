@@ -35,14 +35,24 @@ class wpwidget_media_gallery extends WP_Widget {
 
 	// Widget Output
 	function widget($args, $instance) {
-		extract($args);    
+	   
+                extract($args); 
+                   
                 global $post;
-		$title = apply_filters('widget_title', $instance['title']);               
+		        $title        = apply_filters('widget_title', $instance['title']);               
                 $wpwidgetpage = $instance['wpwidgetpage'];
                 $wpwidgetsize = $instance['wpwidgetsize'];
-                $images = explode(',',$instance['wpwidget_thumbnail_image']);
-                $showtitle = !empty($instance['wpwidget_showtitle'])?true:false;
-                $showdesc = !empty($instance['wpwidget_showdesc'])?true:false;
+                $images       = explode(',',$instance['wpwidget_thumbnail_image']);
+                $showtitle    = !empty($instance['wpwidget_showtitle'])?true:false;
+                $showdesc     = !empty($instance['wpwidget_showdesc'])?true:false;
+                $carousel     = !empty($instance['wpwidget_showcarousel'])?true:false;
+                $pager        = !empty($instance['wpwidget_showpager'])?true:false;
+                $button       = !empty($instance['wpwidget_showbutton'])?true:false;  
+                $scroll       = $instance['wpwidget_cscroll'];
+                $delay        = $instance['wpwidget_cdelay'];
+                $visible      = $instance['wpwidget_cvisible'];
+                
+                
                 $page_object = get_queried_object();
                 $wtheID     = get_queried_object_id();
                 $styleadditions = "margin:0 auto 3px;";
@@ -92,31 +102,95 @@ class wpwidget_media_gallery extends WP_Widget {
                     echo $before_widget;
                     echo $before_title . $title . $after_title;   
                     if (is_array($images)):
-                    echo '<ul id="widget-media-container">';                       
-                    foreach( $images as $image){ 
-                            $attachment = get_post( $image );
-                            $obj = array(
-                                    'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
-                                    'caption' => $attachment->post_excerpt,
-                                    'description' => $attachment->post_content,
-                                    'href' => get_permalink( $attachment->ID ),
-                                    'src' => $attachment->guid,
-                                    'title' => $attachment->post_title
-                            );
-                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
-                            $src   = wp_get_attachment_image_src( $image, 'full' );
-                            if ( $url ):
-                                $out   = '<li class="item"><a href="'.$src[0].'" data-lightbox="'.$obj['title'].'" title="'.$obj['title'].'">'.$url.'</a>';
-                                if ( $showtitle )
-                                $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
-                                if ( $showdesc )
-                                $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                          
-                                $out  .= '</li>';              
-                                echo $out;
-                            endif;
-                    }
-                    echo '</ul>';
+                    
+                        if ( $carousel ){
+                            
+                            $scroll == 'scroll-vert' ? $scroll = 'true' : $scroll = 'false'; 
+                            
+                            $btnpager  = '<div class=wpwidget-button>';
+                            $btnpager .= '<a href=# id=wpwidget-button-prev></a>';
+                            $btnpager .= '<a href=# id=wpwidget-button-next></a>';
+                            $btnpager .= '</div>'; 
+                            
+                            if ( $button ) { echo $btnpager; }
+                            
+                            echo "<div class=\"wpwidget-slideshow\" 
+                                       data-cycle-carousel-vertical={$scroll} 
+                                       data-cycle-fx=carousel 
+                                       data-cycle-timeout={$delay} 
+                                       data-cycle-carousel-visible={$visible} 
+                                       data-cycle-pager=\"#wpwidget-pager\"
+                                       data-cycle-prev=\"#wpwidget-button-prev\"
+                                       data-cycle-next=\"#wpwidget-button-next\">";                                                                                  
+                            
+                            foreach( $images as $image){ 
+                                    $attachment = get_post( $image );
+                                    $obj = array(
+                                            'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+                                            'caption' => $attachment->post_excerpt,
+                                            'description' => $attachment->post_content,
+                                            'href' => get_permalink( $attachment->ID ),
+                                            'src' => $attachment->guid,
+                                            'title' => $attachment->post_title
+                                    );
+                                    $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
+                                    $src   = wp_get_attachment_image_src( $image, 'full' );
+                                    if ( $url ):
+                                        $out   = $url;
+                                        if ( $showtitle )
+                                        $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
+                                        if ( $showdesc )
+                                        $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                                     
+                                        echo $out;
+                                    endif;
+                            }                                                        
+                            
+                            echo '</div>'; 
+                            
+                            $dotpager = '<div class="cycle-pager" id="wpwidget-pager"></div>';
+                            
+                            if ( $pager ) { echo $dotpager; }
+                            
+                            ?>
+                                <script>
+                                    jQuery(document).ready(function($){
+                                        $.fn.cycle.defaults.autoSelector = '.wpwidget-slideshow';
+                                    });
+                                </script>
+                            <?php
+                        }else{
+                            
+                            echo '<ul id="widget-media-container">';    
+                                               
+                            foreach( $images as $image){ 
+                                    $attachment = get_post( $image );
+                                    $obj = array(
+                                            'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+                                            'caption' => $attachment->post_excerpt,
+                                            'description' => $attachment->post_content,
+                                            'href' => get_permalink( $attachment->ID ),
+                                            'src' => $attachment->guid,
+                                            'title' => $attachment->post_title
+                                    );
+                                    $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
+                                    $src   = wp_get_attachment_image_src( $image, 'full' );
+                                    if ( $url ):
+                                        $out   = '<li class="item"><a href="'.$src[0].'" data-lightbox="'.$obj['title'].'" title="'.$obj['title'].'">'.$url.'</a>';
+                                        if ( $showtitle )
+                                        $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
+                                        if ( $showdesc )
+                                        $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                          
+                                        $out  .= '</li>';              
+                                        echo $out;
+                                    endif;
+                            }
+                            
+                            echo '</ul>';
+                            
+                         }   
+                         
                     endif;
+                    
                     echo $after_widget;		                                
 		// ------
            }    
@@ -131,6 +205,12 @@ class wpwidget_media_gallery extends WP_Widget {
                 $instance['wpwidget_showtitle'] = isset($new_instance['wpwidget_showtitle']);
                 $instance['wpwidget_showdesc'] = isset($new_instance['wpwidget_showdesc']);
                 $instance['wpwidget_thumbnail_image'] = $new_instance['wpwidget_thumbnail_image'];
+                $instance['wpwidget_showcarousel'] = isset($new_instance['wpwidget_showcarousel']);
+                $instance['wpwidget_cscroll'] = strip_tags($new_instance['wpwidget_cscroll']);
+                $instance['wpwidget_showpager'] = isset($new_instance['wpwidget_showpager']);
+                $instance['wpwidget_showbutton'] = isset($new_instance['wpwidget_showbutton']);
+                $instance['wpwidget_cdelay'] = $new_instance['wpwidget_cdelay'];
+                $instance['wpwidget_cvisible'] = $new_instance['wpwidget_cvisible'];    
                 
 		return $instance;
 	}
@@ -144,15 +224,21 @@ class wpwidget_media_gallery extends WP_Widget {
                     'wpwidgetsize' => 'thumbnail',
                     'wpwidget_showtitle' => false,
                     'wpwidget_showdesc' => false,
-                    'wpwidget_thumbnail_image' => array()
-                    ); // Default Values
+                    'wpwidget_thumbnail_image' => array(),
+                    'wpwidget_showcarousel' => false,
+                    'wpwidget_cscroll' => 'scroll-horz',
+                    'wpwidget_showpager' => true,
+                    'wpwidget_showbutton' => true,
+                    'wpwidget_cdelay' => 1000,
+                    'wpwidget_cvisible' => 1 ); // Default Values
+                    
 		$instance = wp_parse_args( (array) $instance, $defaults ); 
                 
         ?>        
         <p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>">Widget Title:</label>
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" />
-	</p>
+	    </p>
         <p>
                     <label for="<?php echo $this->get_field_id( 'wpwidgetpage' ); ?>">Show in Pages:<br /></label>			
                     <?php  
@@ -200,12 +286,12 @@ class wpwidget_media_gallery extends WP_Widget {
                     </select>
         </p>
         <p>                
-		<input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showtitle' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showtitle' ); ?>" <?php checked(isset($instance['wpwidget_showtitle']) ? $instance['wpwidget_showtitle'] : 0); ?>/>
-                <label for="<?php echo $this->get_field_id( 'wpwidget_showtitle' ); ?>">Display image title:</label>
+		      <input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showtitle' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showtitle' ); ?>" <?php checked(isset($instance['wpwidget_showtitle']) ? $instance['wpwidget_showtitle'] : 0); ?>/>
+              <label for="<?php echo $this->get_field_id( 'wpwidget_showtitle' ); ?>">Display image title:</label>
         </p>
         <p>                
-		<input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showdesc' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showdesc' ); ?>" <?php checked(isset($instance['wpwidget_showdesc']) ? $instance['wpwidget_showdesc'] : 0); ?> />
-                <label for="<?php echo $this->get_field_id( 'wpwidget_showdesc' ); ?>">Display image description:</label>
+		      <input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showdesc' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showdesc' ); ?>" <?php checked(isset($instance['wpwidget_showdesc']) ? $instance['wpwidget_showdesc'] : 0); ?> />
+              <label for="<?php echo $this->get_field_id( 'wpwidget_showdesc' ); ?>">Display image description:</label>
         </p>
         <p class="wp-widget-gal">
                 <input type="button" value="<?php _e( 'Upload Image', 'wpwidget_media_gallery' ); ?>" class="button wpwidget_media_upload" id="wpwidget_media_upload"/>                  	
@@ -242,6 +328,38 @@ class wpwidget_media_gallery extends WP_Widget {
                 </ul> 
                 <?php } ?>
         </p>
+        
+        <p>
+            <input type="checkbox" class="enable-carousel" id="<?php echo $this->get_field_id( 'wpwidget_showcarousel' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showcarousel' ); ?>" <?php checked(isset($instance['wpwidget_showcarousel']) ? $instance['wpwidget_showcarousel'] : 0); ?> />
+            <label for="<?php echo $this->get_field_id( 'wpwidget_showcarousel' ); ?>">Enable carousel:</label>            
+        </p>
+        
+        <div id="carousel_content">
+            <p>
+                <input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showpager' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showpager' ); ?>" <?php checked(isset($instance['wpwidget_showpager']) ? $instance['wpwidget_showpager'] : 0); ?> />
+                <label for="<?php echo $this->get_field_id( 'wpwidget_showpager' ); ?>">Show Pager:</label>
+            </p>
+            <p>
+                <input type="checkbox" class="" id="<?php echo $this->get_field_id( 'wpwidget_showbutton' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_showbutton' ); ?>" <?php checked(isset($instance['wpwidget_showbutton']) ? $instance['wpwidget_showbutton'] : 0); ?> />
+                <label for="<?php echo $this->get_field_id( 'wpwidget_showbutton' ); ?>">Show Prev / Next:</label>
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id( 'wpwidget_cscroll' ); ?>">Carousel Display:<br /></label>
+                <select name="<?php echo $this->get_field_name('wpwidget_cscroll'); ?>" style='width:100%;'> 
+                    <?php $selected = 'selected=selected'; echo $instance['wpwidget_cscroll']; ?>
+                    <option value="scroll-horz" <?php if (trim($instance['wpwidget_cscroll']) == 'scroll-horz')echo $selected; else ''; ?>>Horizontal</options>
+                    <option value="scroll-vert" <?php if (trim($instance['wpwidget_cscroll']) == 'scroll-vert')echo $selected; else ''; ?>>Vertical</options>  
+                </select>
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id( 'wpwidget_cdelay' ); ?>">Delay:<br /></label>
+                <input type="text" class="" id="<?php echo $this->get_field_id( 'wpwidget_cdelay' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_cdelay' ); ?>" value="<?php echo $instance['wpwidget_cdelay']; ?>" />                
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id( 'wpwidget_cvisible' ); ?>">Number of visible images:<br /></label>
+                <input type="text" class="" id="<?php echo $this->get_field_id( 'wpwidget_cvisible' ); ?>" name="<?php echo $this->get_field_name( 'wpwidget_cvisible' ); ?>" value="<?php echo $instance['wpwidget_cvisible']; ?>" />                
+            </p>
+        </div>
                 
 <?php }       
 }//end of class 
@@ -256,12 +374,14 @@ class wpwidget_media_gallery extends WP_Widget {
         //Media upload
         add_action('admin_init', 'widget_media_gallery_upload');
         function widget_media_gallery_upload(){
-            wp_register_script( 'wpwidget-mediaupload', plugins_url() . '/wp-widget-gallery/js/mediaupload.js', array('jquery') );
+            wp_register_script( 'wpwidget-mediaupload', plugins_url('js/mediaupload.js', __FILE__ ), array('jquery') );
             wp_enqueue_script ( 'wpwidget-mediaupload' );
-            wp_register_script( 'wpwidget-masonry', plugins_url() . '/wp-widget-gallery/js/jquery.masonry.min.js', array('jquery') );
+            wp_register_script( 'wpwidget-masonry', plugins_url('js/jquery.masonry.min.js', __FILE__ ), array('jquery') );
             wp_enqueue_script ( 'wpwidget-masonry' );            
-            wp_register_script( 'wpwidget-modernizer', plugins_url() . '/wp-widget-gallery/js/modernizr-2.5.3.min.js', array('jquery') );
-            wp_enqueue_script ( 'wpwidget-modernizer' );              
+            wp_register_script( 'wpwidget-modernizer', plugins_url('js/modernizr-2.5.3.min.js', __FILE__ ), array('jquery') );
+            wp_enqueue_script ( 'wpwidget-modernizer' );               
+            
+            wp_enqueue_style  ( 'wpwidget-style', plugins_url('css/admin.css', __FILE__ ));           
             
             if(function_exists( 'wp_enqueue_media' )){ 	
                     wp_enqueue_media();
@@ -274,44 +394,17 @@ class wpwidget_media_gallery extends WP_Widget {
         
         add_action('wp_enqueue_scripts', 'wp_media_gallery_script');
         function wp_media_gallery_script(){
-            wp_register_script( 'wpwidget-lightbox', plugins_url() . '/wp-widget-gallery/js/lightbox-2.6.min.js', array('jquery') );
+            wp_register_script( 'wpwidget-lightbox', plugins_url('js/lightbox-2.6.min.js', __FILE__ ), array('jquery'),'',true );
             wp_enqueue_script ( 'wpwidget-lightbox' );
+            wp_register_script( 'wpwidget-cycle', plugins_url('js/jquery.cycle.js', __FILE__ ), array('jquery'),'',true );
+            wp_enqueue_script ( 'wpwidget-cycle' );
+            wp_register_script( 'wpwidget-carousel', plugins_url('js/jquery.carousel.js', __FILE__ ), array('jquery'),'',true );
+            wp_enqueue_script ( 'wpwidget-carousel' );  
         }
-
-        function widget_media_css(){
-?>
-                <style type="text/css">
-                    #widget-media-container {
-                        clear:both;      
-                        display:inline-table;
-                    }
-                    .widget ul li.item, div.item {
-                        display: block;
-                        float: left;
-                        width: auto;
-                        margin: 3px;
-                        list-style: none;
-                        -webkit-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                        -moz-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                        -ms-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                        -o-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                        transition: left .4s ease-in-out, top .4s ease-in-out .4s;
-                    }
-
-                    .widget ul li.item img {
-                        margin:0 auto;
-                        display:block;
-                        position:relative
-                    }
-                </style>
-<?php   
-        }
-        
-        add_action('wp_head','widget_media_css');
 
         function wpwidget_lightbox(){
-            wp_register_style('wpwidget-lightbox', plugins_url('wp-widget-gallery/css/lightbox.css',__DIR__));
-            wp_enqueue_style('wpwidget-lightbox');
+            wp_register_style('wpwidget-lightbox', plugins_url('css/lightbox.css', __FILE__ ));
+            wp_enqueue_style ('wpwidget-lightbox');
         }
         if ( !is_admin() ){
             add_action('wp_enqueue_scripts','wpwidget_lightbox');
