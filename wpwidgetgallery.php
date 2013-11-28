@@ -62,8 +62,9 @@ class wpwidget_media_gallery extends WP_Widget {
                         // Width and Height added to style as IE was ignoring the default width and height set.
                         //$styleadditions = "float: left; display: block;margin:3px; width: 50px; height: 50px;";
                 }
-                                
-                if( !empty($wpwidgetpage)){                    
+                           
+                if( !empty($wpwidgetpage) && !(in_array(0, $instance["wpwidgetpage"]))){     
+                    
                 if ( in_array($wtheID, $wpwidgetpage) ):
                     // ------                 
                     echo $before_widget;
@@ -323,13 +324,23 @@ class wpwidget_media_gallery extends WP_Widget {
                         $pages = get_pages($args); 
                         ?>
 
-                        <select multiple='multiple' name="<?php echo $this->get_field_name('wpwidgetpage'); ?>[]" style='width:100%;'>
-                        <?php foreach ($pages as $page): ?>
-                        <?php   if (is_array($instance['wpwidgetpage']) ): ?>                    
-                                    <option value="<?php echo $page->ID ?>" <?php selected(in_array($page->ID, $instance["wpwidgetpage"]))?>><?php echo trim($page->post_title)?></options>
-                        <?php   else: ?>
-                                    <option value="<?php echo $page->ID ?>"><?php echo trim($page->post_title) ?></options>
-                        <?php   endif; ?>
+                        <select multiple='multiple' name="<?php echo $this->get_field_name('wpwidgetpage'); ?>[]" style='width:100%;'>                        
+                        
+                            <?php 
+                                if ( $instance["wpwidgetpage"] === NULL || !is_array($instance['wpwidgetpage']) ){
+                                    echo '<option value=0 selected=selected>Default (Displayed in Sidebar)</options>';
+                                }else{
+                                    echo '<option value=0 '.selected(in_array(0, $instance["wpwidgetpage"])).'>Default (Displayed in Sidebar)</options>';
+                                }                                          
+                            ?>  
+                              
+                            <?php  foreach ($pages as $page): ?>
+                            
+                            <?php  if (is_array($instance['wpwidgetpage']) ): ?>            
+                                        <option value="<?php echo $page->ID ?>" <?php selected(in_array($page->ID, $instance["wpwidgetpage"]))?>><?php echo trim($page->post_title)?></options>
+                            <?php   else: ?>
+                                        <option value="<?php echo $page->ID ?>"><?php echo trim($page->post_title) ?></options>
+                            <?php   endif; ?>
 
                         <?php endforeach;  ?>
 
