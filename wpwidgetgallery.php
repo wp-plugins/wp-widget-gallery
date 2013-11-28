@@ -69,30 +69,91 @@ class wpwidget_media_gallery extends WP_Widget {
                     echo $before_widget;
                     echo $before_title . $title . $after_title;   
                     if (is_array($images)):
-                    echo '<ul id="widget-media-container">';                       
-                    foreach( $images as $image){ 
-                            $attachment = get_post( $image );
-                            $obj = array(
-                                    'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
-                                    'caption' => $attachment->post_excerpt,
-                                    'description' => $attachment->post_content,
-                                    'href' => get_permalink( $attachment->ID ),
-                                    'src' => $attachment->guid,
-                                    'title' => $attachment->post_title
-                            );
-                            $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
-                            $src   = wp_get_attachment_image_src( $image, 'full' );
-                            if ( $url ):
-                                $out   = '<li class="item"><a href="'.$src[0].'" data-lightbox="'.$obj['title'].'" title="'.$obj['title'].'">'.$url.'</a>';
-                                if ( $showtitle )
-                                $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
-                                if ( $showdesc )
-                                $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                          
-                                $out  .= '</li>';              
-                                echo $out;
-                            endif;
-                    }
-                    echo '</ul>';
+                        if ( $carousel ){
+                            
+                            $scroll == 'scroll-vert' ? $scroll = 'true' : $scroll = 'false'; 
+                            
+                            $btnpager  = '<div class=wpwidget-button>';
+                            $btnpager .= '<a href=# id=wpwidget-button-prev></a>';
+                            $btnpager .= '<a href=# id=wpwidget-button-next></a>';
+                            $btnpager .= '</div>'; 
+                            
+                            if ( $button ) { echo $btnpager; }
+                            
+                            echo "<div class=\"wpwidget-slideshow\" 
+                                       data-cycle-carousel-vertical={$scroll} 
+                                       data-cycle-fx=carousel 
+                                       data-cycle-timeout={$delay} 
+                                       data-cycle-carousel-visible={$visible} 
+                                       data-cycle-pager=\"#wpwidget-pager\"
+                                       data-cycle-prev=\"#wpwidget-button-prev\"
+                                       data-cycle-next=\"#wpwidget-button-next\">";                                                                                  
+                            
+                            foreach( $images as $image){ 
+                                    $attachment = get_post( $image );
+                                    $obj = array(
+                                            'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+                                            'caption' => $attachment->post_excerpt,
+                                            'description' => $attachment->post_content,
+                                            'href' => get_permalink( $attachment->ID ),
+                                            'src' => $attachment->guid,
+                                            'title' => $attachment->post_title
+                                    );
+                                    $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
+                                    $src   = wp_get_attachment_image_src( $image, 'full' );
+                                    if ( $url ):
+                                        $out   = $url;
+                                        if ( $showtitle )
+                                        $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
+                                        if ( $showdesc )
+                                        $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                                     
+                                        echo $out;
+                                    endif;
+                            }                                                        
+                            
+                            echo '</div>'; 
+                            
+                            $dotpager = '<div class="cycle-pager" id="wpwidget-pager"></div>';
+                            
+                            if ( $pager ) { echo $dotpager; }
+                            
+                            ?>
+                                <script>
+                                    jQuery(document).ready(function($){
+                                        $.fn.cycle.defaults.autoSelector = '.wpwidget-slideshow';
+                                    });
+                                </script>
+                            <?php
+                        }else{
+                            
+                            echo '<ul id="widget-media-container">';    
+                                               
+                            foreach( $images as $image){ 
+                                    $attachment = get_post( $image );
+                                    $obj = array(
+                                            'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
+                                            'caption' => $attachment->post_excerpt,
+                                            'description' => $attachment->post_content,
+                                            'href' => get_permalink( $attachment->ID ),
+                                            'src' => $attachment->guid,
+                                            'title' => $attachment->post_title
+                                    );
+                                    $url   = wp_get_attachment_image($image, $wpwidgetsize, false);
+                                    $src   = wp_get_attachment_image_src( $image, 'full' );
+                                    if ( $url ):
+                                        $out   = '<li class="item"><a href="'.$src[0].'" data-lightbox="'.$obj['title'].'" title="'.$obj['title'].'">'.$url.'</a>';
+                                        if ( $showtitle )
+                                        $out  .= '<p style="text-align:center;text-transform:uppercase;font-size:.9em;">'.$obj['title'].'</p>';                            
+                                        if ( $showdesc )
+                                        $out  .= '<p style="text-align:center;font-size:.9em;">'.$obj['description'].'</p>';                                          
+                                        $out  .= '</li>';              
+                                        echo $out;
+                                    endif;
+                            }
+                            
+                            echo '</ul>';
+                            
+                         }   
                     endif;
                     echo $after_widget;		                                	                                
 		// ------
