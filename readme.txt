@@ -32,13 +32,25 @@ In your theme script add the following script :
 //Just use the necessary number to make your condition right.
 
 //Sample : For IPAD and Android tablets / Portrait
+
 if( jQuery(window).width() < 767 ){
     jQuery('.wpwidget-slideshow').attr('data-cycle-carousel-visible', 2)
 }
 
 //Sample : For mobile phones / Portrait
+
 if( jQuery(window).width() < 567 ){
     jQuery('.wpwidget-slideshow').attr('data-cycle-carousel-visible', 1)
+}
+
+= How to hide prev/next button on small devices =
+
+if( jQuery(window).width() < 767 ){
+    jQuery('.wpwidget-button').css({display:'none'})
+}
+
+if( jQuery(window).width() < 567 ){
+    jQuery('.wpwidget-button').css({display:'none'})
 }
 
 
