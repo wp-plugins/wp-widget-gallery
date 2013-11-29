@@ -25,9 +25,23 @@ If you find this plugin helpful, we appreciate if you give us your review.
 
 == Frequently asked questions ==   
 
-= A question that someone might have =
+= How to change display for small devices using jquery? =
 
-An answer to that question.
+In your theme script add the following script :
+
+//Just use the necessary number to make your condition right.
+
+//Sample : For IPAD and Android tablets / Portrait
+if( jQuery(window).width() < 767 ){
+    jQuery('.wpwidget-slideshow').attr('data-cycle-carousel-visible', 2)
+}
+
+//Sample : For mobile phones / Portrait
+if( jQuery(window).width() < 567 ){
+    jQuery('.wpwidget-slideshow').attr('data-cycle-carousel-visible', 1)
+}
+
+
 
 == Screenshots ==
 
