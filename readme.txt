@@ -61,6 +61,9 @@ if( jQuery(window).width() < 567 ){
 
 == Changelog ==
 
+= 1.5.1 =
+* Fix conflict script on set featured image for post and pages. 
+
 = 1.5 =
 * Add option to activate widget carousel.
 
@@ -81,6 +84,9 @@ if( jQuery(window).width() < 567 ){
 
 == Upgrade notice ==
 
+= 1.5.1 =
+* Fix conflict script on set featured image for post and pages. 
+
 = 1.5 =
 * Add option to activate widget carousel.
 
@@ -94,6 +100,9 @@ if( jQuery(window).width() < 567 ){
 * Update WP-Widget Media upload.
 
 == Arbitrary section 1 ==
+
+= 1.5.1 =
+* Fix conflict script on set featured image for post and pages. 
 
 = 1.5 =
 * Add option to activate widget carousel.
