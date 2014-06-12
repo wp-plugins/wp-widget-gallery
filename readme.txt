@@ -1,10 +1,10 @@
 === WP Widget Gallery ===
-Contributors: eyouth.ace
+Contributors: crea8xion
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=33HE6UC8VRNRU&lc=PH&item_name=Charity%20Thermometer&item_number=charterm¤cy_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: widget, sidebar, gallery, sidebar gallery, wp-widget, widget gallery
 Requires at least: 3.5
-Tested up to: 3.7.1
-Stable tag: widget, sidebar, gallery, sidebar gallery, wp-widget, widget gallery
+Tested up to: 3.9.1
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,11 @@ if( jQuery(window).width() < 567 ){
 
 == Changelog ==
 
+= 1.5.2 =
+* Change lightbox plugin.
+* Add share buttons to twitter and facebook.
+* Fix upload button if widget is active. Currently you need to refresh the page in order for the upload button to work. 
+
 = 1.5.1 =
 * Fix conflict script on set featured image for post and pages. 
 
@@ -83,6 +88,9 @@ if( jQuery(window).width() < 567 ){
 * Initial plugin version
 
 == Upgrade notice ==
+
+= 1.5.2 =
+* Important update for lightbox function. 
 
 = 1.5.1 =
 * Fix conflict script on set featured image for post and pages. 

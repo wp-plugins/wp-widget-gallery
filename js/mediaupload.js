@@ -16,7 +16,7 @@ jQuery(document).ready(function($) {
                         jQuery(this).masonry('reload');
                 });
 		    
-		  jQuery('#wpwidget_media_upload').live('click', function( event ){
+		  jQuery('body').on('click','#wpwidget_media_upload', function( event ){
 		 
 			event.preventDefault(); 
                          var $this;
@@ -94,7 +94,7 @@ jQuery(document).ready(function($) {
 		  });
 	 
 	 	 				
-		jQuery('.wpwidget_rem_img').live('click', function(event){
+		jQuery('body').on('click','.wpwidget_rem_img', function(event){
 			
 			event.preventDefault();	                          
                         var _remid = jQuery(this).attr('data-attachment_id');
