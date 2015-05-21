@@ -1,5 +1,8 @@
 <?php
 
+// File Security Check
+if ( ! defined( 'ABSPATH' ) ) exit; 
+
 class wpwidget_media_gallery extends WP_Widget { 
     
         function __construct() {

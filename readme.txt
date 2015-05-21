@@ -61,6 +61,9 @@ if( jQuery(window).width() < 567 ){
 
 == Changelog ==
 
+= 1.5.3 =
+* Update on prettyPhoto XSS exploit - reported by WP.
+
 = 1.5.2 =
 * Change lightbox plugin.
 * Add share buttons to twitter and facebook.
