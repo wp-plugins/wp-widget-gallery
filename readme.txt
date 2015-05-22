@@ -92,6 +92,9 @@ if( jQuery(window).width() < 567 ){
 
 == Upgrade notice ==
 
+= 1.5.3 =
+* Update on prettyPhoto XSS exploit - reported by WP.
+
 = 1.5.2 =
 * Important update for lightbox function. 
 
